@@ -1,0 +1,14 @@
+# Railway Nixpacks configuration for the CityPharm app.
+# Forces Node 22 and pnpm 10, and runs `pnpm install` + `pnpm build` on each deploy.
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "pnpm"]
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile=false"]
+
+[phases.build]
+cmds = ["pnpm build"]
+
+[start]
+cmd = "pnpm db:migrate && pnpm start"
