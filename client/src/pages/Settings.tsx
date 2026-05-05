@@ -26,11 +26,6 @@ export default function Settings() {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
   const utils = trpc.useUtils();
-  const dedupMutation = trpc.utils.deduplicateSuppliers.useMutation({
-    onSuccess: (r) => { utils.suppliers.list.invalidate(); toast.success(`Done: removed ${r.removed} duplicates, ${r.remaining} suppliers remain.`); },
-    onError: (e) => toast.error(e.message),
-  });
-
   // Users
   const { data: appUsers = [], isLoading: usersLoading } = trpc.appUsers.list.useQuery();
   const createUserMutation = trpc.appUsers.create.useMutation({
@@ -261,18 +256,7 @@ export default function Settings() {
                 hashes that the sign-in handler also accepts for backward compatibility.
               </p>
             </div>
-            <div className="pt-4 border-t border-border/50">
-              <h3 className="text-sm font-semibold text-foreground mb-1">Database Maintenance</h3>
-              <p className="text-xs text-muted-foreground mb-3">Run one-time cleanup tasks to fix data issues from seeding.</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => dedupMutation.mutate()}
-                disabled={dedupMutation.isPending}
-              >
-                {dedupMutation.isPending ? "Cleaning..." : "Remove Duplicate Suppliers"}
-              </Button>
-            </div>
+
           </div>
         </TabsContent>
       </Tabs>
