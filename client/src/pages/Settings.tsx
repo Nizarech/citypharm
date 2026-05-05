@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,8 @@ function RoleIcon({ role }: { role: string }) {
 }
 
 export default function Settings() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
   const utils = trpc.useUtils();
   const dedupMutation = trpc.utils.deduplicateSuppliers.useMutation({
     onSuccess: (r) => { utils.suppliers.list.invalidate(); toast.success(`Done: removed ${r.removed} duplicates, ${r.remaining} suppliers remain.`); },
@@ -74,15 +77,15 @@ export default function Settings() {
         <p className="text-sm text-muted-foreground mt-0.5">Manage users, categories, and system configuration</p>
       </div>
 
-      <Tabs defaultValue="users">
+      <Tabs defaultValue={isAdmin ? "users" : "categories"}>
         <TabsList>
-          <TabsTrigger value="users">User Management</TabsTrigger>
+          {isAdmin && <TabsTrigger value="users">User Management</TabsTrigger>}
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="system">System Info</TabsTrigger>
         </TabsList>
 
-        {/* Users Tab */}
-        <TabsContent value="users" className="space-y-4">
+        {/* Users Tab — admin only */}
+        {isAdmin && <TabsContent value="users" className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">{appUsers.length} registered users</p>
             <Dialog open={userOpen} onOpenChange={setUserOpen}>
@@ -166,7 +169,7 @@ export default function Settings() {
               </tbody>
             </table>
           </div>
-        </TabsContent>
+        </TabsContent>}
 
         {/* Categories Tab */}
         <TabsContent value="categories" className="space-y-4">
