@@ -6,7 +6,6 @@ import path from "path";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { registerUploads, UPLOADS_DIR } from "../storage";
 import { serveStatic, setupVite } from "./vite";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -34,10 +33,6 @@ async function startServer() {
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-
-  // Serve uploaded files from the local filesystem under /uploads
-  app.use("/uploads", express.static(UPLOADS_DIR, { fallthrough: false }));
-  registerUploads(app);
 
   app.use(
     "/api/trpc",

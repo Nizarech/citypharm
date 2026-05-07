@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
-import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 
 const menuGroups = [
   {
@@ -84,18 +83,15 @@ export default function DashboardLayout({
   }, [sidebarWidth]);
 
   if (loading) {
-    return <DashboardLayoutSkeleton />
+    return <div className="flex h-screen items-center justify-center bg-background"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
   }
 
   if (!user) {
-    // Anyone landing on a protected route without a session is sent to the
-    // branded sign-in page; we preserve the current path so they bounce
-    // back here after a successful login.
     if (typeof window !== "undefined") {
       const next = window.location.pathname + window.location.search;
       window.location.href = getLoginUrl(next);
     }
-    return <DashboardLayoutSkeleton />;
+    return <div className="flex h-screen items-center justify-center bg-background"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
   }
 
   return (
